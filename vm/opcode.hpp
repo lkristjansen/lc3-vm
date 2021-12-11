@@ -18,11 +18,7 @@ constexpr uint16_t opcode(uint16_t word) {
 }
 
 constexpr bool use_immediate(uint16_t word) {
-    return word & 0x0010;
-}
-
-constexpr uint16_t immediate(uint16_t word) {
-    return word & 0x1f;
+    return word & 0x0020;
 }
 
 constexpr uint16_t destination_register(uint16_t word) {
@@ -44,6 +40,14 @@ constexpr auto sign_extend(std::integral auto word, std::integral auto bit) -> d
         return word | (std::numeric_limits<decltype(word)>::max()<<bit);
 
     return word;
+}
+
+constexpr uint16_t immediate(uint16_t word) {
+    return sign_extend(word & 0x1f, 4);
+}
+
+constexpr uint16_t offset(uint16_t word) {
+    return sign_extend(word & 0x01ff, 8);
 }
 
 } // end namespace vm

@@ -30,16 +30,20 @@ TEST(sign_extend, positive_number) {
 
 TEST(use_immediate, should_use_intermediate) {
     ASSERT_TRUE(use_immediate(0xffff));
-    ASSERT_TRUE(use_immediate(0x0010));
+    ASSERT_TRUE(use_immediate(0x0020));
 }
 
 TEST(use_immediate, should_not_use_intermediate) {
     ASSERT_FALSE(use_immediate(0x0000));
-    ASSERT_FALSE(use_immediate(0xffef));
+    ASSERT_FALSE(use_immediate(0xffdf));
+}
+
+TEST(immediate, negative_value) {
+    ASSERT_EQ(0xffff, immediate(0x001f));
 }
 
 TEST(immediate, max_value) {
-    ASSERT_EQ(0x1f, immediate(0x001f));
+    ASSERT_EQ(0xf, immediate(0x000f));
 }
 
 TEST(immediate, zero_value) {
