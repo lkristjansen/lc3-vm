@@ -8,9 +8,9 @@ TEST(opcode, opcode_type) {
     ASSERT_EQ(0xf, opcode(0xf000));
 }
 
-TEST(sign_extend, negative_zero) {
-    const uint16_t instr{0x8}; 
-    ASSERT_EQ(0xfff8, sign_extend(instr, 3));
+TEST(sign_extend, negative) {
+    const uint16_t instr{0x4}; 
+    ASSERT_EQ(0xfffc, sign_extend(instr, 3));
 }
 
 TEST(sign_extend, zero) {
@@ -24,8 +24,8 @@ TEST(sign_extend, negative_number) {
 }
 
 TEST(sign_extend, positive_number) {
-    const uint16_t instr{0x6};
-    ASSERT_EQ(0x6, sign_extend(instr, 3));
+    const uint16_t instr{0x3};
+    ASSERT_EQ(0x3, sign_extend(instr, 3));
 }
 
 TEST(use_immediate, should_use_intermediate) {
@@ -43,7 +43,7 @@ TEST(immediate, negative_value) {
 }
 
 TEST(immediate, max_value) {
-    ASSERT_EQ(0xf, immediate(0x000f));
+    ASSERT_EQ(0x0f, immediate(0x000f));
 }
 
 TEST(immediate, zero_value) {

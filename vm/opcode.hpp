@@ -34,7 +34,7 @@ constexpr uint16_t source_register_2(uint16_t word) {
 }
 
 constexpr auto sign_extend(std::integral auto word, std::integral auto bit) -> decltype(word) {
-    const bool is_negativ = (word>>bit) & 1;
+    const bool is_negativ = (word>>(bit-1)) & 1;
 
     if (is_negativ)
         return word | (std::numeric_limits<decltype(word)>::max()<<bit);
@@ -43,7 +43,7 @@ constexpr auto sign_extend(std::integral auto word, std::integral auto bit) -> d
 }
 
 constexpr uint16_t immediate(uint16_t word) {
-    return sign_extend(word & 0x1f, 4);
+    return sign_extend(word & 0x1f, 5);
 }
 
 constexpr uint16_t offset(uint16_t word) {

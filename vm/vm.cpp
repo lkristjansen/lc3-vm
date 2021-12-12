@@ -49,7 +49,9 @@ void add_instruction(memory_t&, registers_t& registers, uint16_t word) {
 void ld(memory_t& memory, registers_t& registers, uint16_t word) {
     const auto destination = destination_register(word);
     const auto pc = registers[PC];
-    registers[destination] = memory[pc + offset(word)];
+    const auto pc_offset = offset(word);
+    const auto addr = static_cast<uint16_t>(pc + pc_offset);
+    registers[destination] = memory[addr];
 }
 
 void and_instruction(memory_t&, registers_t& registers, uint16_t word) {

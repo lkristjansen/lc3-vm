@@ -49,7 +49,12 @@ struct instruction_builder_t {
 
     constexpr instruction_builder_t& immediate(uint16_t value) {
         word |= 0x20;
-        word |= value;
+        word |= (value & 0x1f);
+        return *this;
+    }
+
+    constexpr instruction_builder_t& offset(uint16_t value) {
+        word |= (value & 0x1ff);
         return *this;
     }
 };

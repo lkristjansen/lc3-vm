@@ -151,3 +151,21 @@ TEST(and_instr, and_immediate) {
 
     ASSERT_EQ(0xa, registers[R0]);
 }
+
+TEST(ld_instr, load) {
+    memory_t memory{};
+    registers_t registers{};
+
+    const auto instr = instruction_builder_t{}
+        .ld()
+        .destination_register(R0)
+        .offset(0x1ff) // -1 in 2-complement.
+        .build();
+
+    registers[PC] = 0x400;
+    memory[0x400 - 1] = 101;
+
+    execute(memory, registers, instr);
+
+    ASSERT_EQ(101, registers[R0]);
+}
