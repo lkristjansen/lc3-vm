@@ -27,49 +27,49 @@ void set_condition_flags(registers_t &registers, register_t index) {
     registers[CND] = flag;
 }
 
-void nop(vm_t&, uint16_t) {}
+void nop(memory_t&, registers_t&, uint16_t) {}
 
-void add_instruction(vm_t& vm, uint16_t word) {
+void add_instruction(memory_t&, registers_t& registers, uint16_t word) {
     const auto destination = destination_register(word);
     const auto sr1 = source_register_1(word);
-    const auto x = vm.registers[sr1];
+    const auto x = registers[sr1];
 
     if (use_immediate(word))
     {
-        vm.registers[destination] = x + immediate(word);
+        registers[destination] = x + immediate(word);
     }
     else
     {
-        vm.registers[destination] = x + vm.registers[source_register_2(word)];
+        registers[destination] = x + registers[source_register_2(word)];
     }
 
-    set_condition_flags(vm.registers, static_cast<register_t>(destination));
+    set_condition_flags(registers, static_cast<register_t>(destination));
 }
 
-void ld(vm_t& vm, uint16_t word) {
+void ld(memory_t& memory, registers_t& registers, uint16_t word) {
     const auto destination = destination_register(word);
-    const auto pc = vm.registers[PC];
-    vm.registers[destination] = vm.memory[pc + offset(word)];
+    const auto pc = registers[PC];
+    registers[destination] = memory[pc + offset(word)];
 }
 
-void and_instruction(vm_t& vm, uint16_t word) {
+void and_instruction(memory_t&, registers_t& registers, uint16_t word) {
     const auto destination = destination_register(word);
     const auto sr1 = source_register_1(word);
-    const auto x = vm.registers[sr1];
+    const auto x = registers[sr1];
 
     if (use_immediate(word))
     {
-        vm.registers[destination] = x & immediate(word);
+        registers[destination] = x & immediate(word);
     }
     else
     {
-        vm.registers[destination] = x & vm.registers[source_register_2(word)];
+        registers[destination] = x & registers[source_register_2(word)];
     }
 
-    set_condition_flags(vm.registers, static_cast<register_t>(destination));
+    set_condition_flags(registers, static_cast<register_t>(destination));
 }
 
-using opcode_handler_t = void (*)(vm_t&, uint16_t);
+using opcode_handler_t = void (*)(memory_t&, registers_t&, uint16_t);
 
 const opcode_handler_t opcode_handlers[] = {
     nop,
@@ -82,14 +82,14 @@ const opcode_handler_t opcode_handlers[] = {
 
 } // implementation namespace
 
-void vm_t::load(std::span<uint16_t> bytecode, uint16_t address) {
+void load(memory_t& memory, std::span<uint16_t> bytecode, uint16_t address) {
     std::copy(std::begin(bytecode), std::end(bytecode), &memory[address]);
 }
 
-void vm_t::execute(uint16_t word) {
+void execute(memory_t& memory, registers_t& registers, uint16_t word) {
     const auto op{opcode(word)};
     const auto fn = opcode_handlers[op];
-    fn(*this, word);
+    fn(memory, registers, word);
 }
 
 } // end namespace vm
